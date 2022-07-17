@@ -1,0 +1,17 @@
+# Range from armor stand to be considered in "the square"
+range: 6.5
+# Minutes required in the square to be crowned Queen.
+minutes: 2
+# Location of the armour stand and sign
+stand: [ 0,0,0 ]
+sign: [ 0,0,0 ]
+sign-text:
+  line-1: "<white><player>"
+  line-2: "<#e2b492>Queen"
+
+messages:
+  queen-on-hill-message: "<#b98863>The <#e2b492>Queen <#b98863>is still on the hill!"
+  timer-message: "<#e2b492><remaining> <#b98863>more seconds to be crowned <#e2b492>Queen!"
+  new-queen-message: "• <#e2b492>░ <player> <#b98863>has been crowned <#e2b492>Queen of the hill<#b98863>! <#e2b492>░"
+  upcoming-queen-message: "<#c0a1d1><player> <#846d91>is attempting to control the hill!"
+  alert-warning-message: "<#c0a1d1><queen> <#846d91>has been alerted that you are here!"

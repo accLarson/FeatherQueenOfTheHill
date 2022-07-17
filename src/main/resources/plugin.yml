@@ -1,0 +1,6 @@
+name: FeatherQueenOfTheHill
+version: '${project.version}'
+main: com.zerek.featherqueenofthehill.FeatherQueenOfTheHill
+api-version: 1.19
+authors: [ Zerek ]
+description: PvP Queen(King) of the hill mini-game
