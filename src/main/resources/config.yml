@@ -8,6 +8,7 @@ sign: [ 0,0,0 ]
 sign-text:
   line-1: "<white><player>"
   line-2: "<#e2b492>Queen"
+  line-3: "<gray><i><minutes> minute(s)"
 
 messages:
   queen-on-hill-message: "<#b98863>The <#e2b492>Queen <#b98863>is still on the hill!"

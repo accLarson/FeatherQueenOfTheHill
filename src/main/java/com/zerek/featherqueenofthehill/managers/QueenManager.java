@@ -25,8 +25,9 @@ public class QueenManager {
 
     private OfflinePlayer queen;
     private Map<Player,Integer> playersMap = new HashMap<>();
-    private final String queenOnHillMessage, timerMessage, newQueenMessage, upcomingQueenMessage, alertWarningMessage, signLine1, signLine2;
+    private final String queenOnHillMessage, timerMessage, newQueenMessage, upcomingQueenMessage, alertWarningMessage, signLine1, signLine2, signLine3;
     private final int seconds;
+    private int activeQueenSeconds = 0;
 
     public QueenManager(FeatherQueenOfTheHill plugin) {
         this.plugin = plugin;
@@ -37,10 +38,15 @@ public class QueenManager {
         alertWarningMessage = plugin.getConfig().getString("messages.alert-warning-message");
         signLine1 = plugin.getConfig().getString("sign-text.line-1");
         signLine2 = plugin.getConfig().getString("sign-text.line-2");
+        signLine3 = plugin.getConfig().getString("sign-text.line-3");
         seconds = plugin.getConfig().getInt("minutes") * 60;
+
     }
 
     public void updateGame(Collection<Player> players, ArmorStand stand, Sign sign){
+        this.activeQueenSeconds += 1;
+        sign.line(3, MiniMessage.miniMessage().deserialize(signLine3,Placeholder.unparsed("minutes", String.valueOf(activeQueenSeconds/60))));
+        sign.update();
         //Remove players who have left the square.
         playersMap = playersMap.entrySet().stream()
                 .filter(x -> players.contains(x.getKey()))
@@ -80,10 +86,14 @@ public class QueenManager {
         plugin.getLogger().info(player.getName() + " is now the Queen of the hill.");
         plugin.getServer().broadcast(MiniMessage.miniMessage().deserialize(newQueenMessage, Placeholder.unparsed("player",player.getName())));
 
+        this.activeQueenSeconds = 0;
+
         setQueen(player);
 
         sign.line(1, MiniMessage.miniMessage().deserialize(signLine1, Placeholder.unparsed("player",player.getName())));
         sign.line(2, MiniMessage.miniMessage().deserialize(signLine2));
+        sign.line(3, MiniMessage.miniMessage().deserialize(signLine3,Placeholder.unparsed("minutes", "0")));
+
         sign.update();
 
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD, 1);
