@@ -83,6 +83,7 @@ public class QueenManager {
     }
 
     private void crownQueen(Player player, ArmorStand stand, Sign sign){
+        stand.getChunk().load();
         plugin.getLogger().info(player.getName() + " is now the Queen of the hill.");
         plugin.getServer().broadcast(MiniMessage.miniMessage().deserialize(newQueenMessage, Placeholder.unparsed("player",player.getName())));
 
@@ -105,9 +106,5 @@ public class QueenManager {
 
     public void setQueen(OfflinePlayer player){
         this.queen = player;
-    }
-
-    public OfflinePlayer getQueen() {
-        return queen;
     }
 }

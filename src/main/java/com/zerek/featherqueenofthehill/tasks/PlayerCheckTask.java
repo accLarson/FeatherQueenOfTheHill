@@ -19,6 +19,7 @@ public class PlayerCheckTask implements Runnable{
         this.stand = stand;
         this.sign = sign;
         this.range = range;
+        this.plugin.getLogger().info("Successfully started QueenOfTheHill.");
     }
 
 
