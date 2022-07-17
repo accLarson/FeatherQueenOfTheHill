@@ -47,10 +47,7 @@ public class InitiateTask implements Runnable{
 
     @Override
     public void run() {
-        if (plugin.getStand() == null || plugin.getSign() == null) {
-            plugin.getLogger().warning("Missing Sign or Stand or Both. Checking for sign/stand again in 1 minute.");
-            plugin.getServer().getScheduler().runTaskLater(plugin, new InitiateTask(plugin),1200);
-        }
+        if (plugin.getStand() == null || plugin.getSign() == null) plugin.getServer().getScheduler().runTaskLater(plugin, new InitiateTask(plugin),1200);
         else plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new PlayerCheckTask(plugin,plugin.getStand(),plugin.getSign(),range), 0L, 20L);
     }
 }

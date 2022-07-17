@@ -4,6 +4,7 @@ import com.zerek.featherqueenofthehill.FeatherQueenOfTheHill;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 
 import java.util.Collection;
 
@@ -24,6 +25,14 @@ public class PlayerCheckTask implements Runnable{
     @Override
     public void run() {
         Collection<Player> players = stand.getLocation().getNearbyPlayers(range,range,range);
+        players.removeIf(this::isVanished);
         plugin.getQueenManager().updateGame(players, stand, sign);
+    }
+
+    private boolean isVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) return true;
+        }
+        return false;
     }
 }
