@@ -1,7 +1,6 @@
 package com.zerek.featherqueenofthehill.managers;
 
 import com.zerek.featherqueenofthehill.FeatherQueenOfTheHill;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
@@ -26,7 +25,7 @@ public class QueenManager {
     private OfflinePlayer queen;
     private Map<Player,Integer> playersMap = new HashMap<>();
     private final String queenOnHillMessage, timerMessage, newQueenMessage, upcomingQueenMessage, alertWarningMessage, signLine1, signLine2, signLine3;
-    private final int seconds;
+    private final int requiredSeconds;
     private int activeQueenSeconds = 0;
 
     public QueenManager(FeatherQueenOfTheHill plugin) {
@@ -39,7 +38,7 @@ public class QueenManager {
         signLine1 = plugin.getConfig().getString("sign-text.line-1");
         signLine2 = plugin.getConfig().getString("sign-text.line-2");
         signLine3 = plugin.getConfig().getString("sign-text.line-3");
-        seconds = plugin.getConfig().getInt("minutes") * 60;
+        requiredSeconds = plugin.getConfig().getInt("minutes") * 60;
 
     }
 
@@ -57,9 +56,10 @@ public class QueenManager {
             if (this.playersMap.containsKey(p)){
                 this.playersMap.put(p, this.playersMap.get(p) + 1);
 
-                if (!(p.equals(queen)) && (this.playersMap.get(p) < this.seconds) && (this.playersMap.get(p) % 10 == 0)){
+                //Player is not Queen, has been in square for less than requiredSeconds, and is at a 10-second interval.
+                if ((!p.equals(queen)) && (this.playersMap.get(p) < this.requiredSeconds) && (this.playersMap.get(p) % 10 == 0)){
                     if (players.contains(queen)) p.sendActionBar(MiniMessage.miniMessage().deserialize(queenOnHillMessage));
-                    else p.sendActionBar(MiniMessage.miniMessage().deserialize(timerMessage, Placeholder.unparsed("remaining", String.valueOf(seconds - playersMap.get(p)))));
+                    else p.sendActionBar(MiniMessage.miniMessage().deserialize(timerMessage, Placeholder.unparsed("remaining", String.valueOf(requiredSeconds - playersMap.get(p)))));
                 }
 
                 //Player has been in the square for exactly 30 seconds and the player is not the Queen.
@@ -69,8 +69,8 @@ public class QueenManager {
                     p.sendMessage(MiniMessage.miniMessage().deserialize(alertWarningMessage, Placeholder.unparsed("queen",onlineQueen.getName())));
                 }
 
-                //Player has been in the square for crownTimeSeconds or more and the queen is not in the square
-                else if (this.playersMap.get(p) >= this.seconds && !(players.contains(queen))) crownQueen(p,stand,sign);
+                //Player has been in the square for requiredSeconds or more, is not the Queen, and the queen is not in the square.
+                else if ((!p.equals(queen)) && this.playersMap.get(p) >= this.requiredSeconds && !(players.contains(queen))) crownQueen(p,stand,sign);
             }
 
             //Player has just entered the square within the last second.
