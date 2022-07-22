@@ -8,11 +8,14 @@ sign: [ 0,0,0 ]
 sign-text:
   line-1: "<white><player>"
   line-2: "<#e2b492>Queen"
-  line-3: "<gray><i><minutes> minute(s)"
+  line-3: "<gray><i>minute(s): <minutes>"
+  line-4: "<gray><i>Score: <score>"
 
 messages:
-  queen-on-hill-message: "<#b98863>The <#e2b492>Queen <#b98863>is still on the hill!"
-  timer-message: "<#e2b492><remaining> <#b98863>more seconds to be crowned <#e2b492>Queen!"
-  new-queen-message: "• <#e2b492>░ <player> <#b98863>has been crowned <#e2b492>Queen of the hill<#b98863>! <#e2b492>░"
-  upcoming-queen-message: "<#c0a1d1><player> <#846d91>is attempting to control the hill!"
-  alert-warning-message: "<#c0a1d1><queen> <#846d91>has been alerted that you are here!"
+  current-queen-info: "<#656b96>Queen: <#949bd1><queen> <#656b96>| Minute(s): <#949bd1><minutes> <#656b96>| Score: <#949bd1><score>"
+  current-queen-wait: "<#656b96>Queen is not set. If the server just restarted, wait 30 seconds."
+  queen-on-hill: "<#b98863>The <#e2b492>Queen <#b98863>is still on the hill!"
+  timer: "<#e2b492><remaining> <#b98863>more seconds to be crowned <#e2b492>Queen!"
+  new-queen: "• <#e2b492>░ <player> <#b98863>has been crowned <#e2b492>Queen of the hill<#b98863>! <#e2b492>░"
+  upcoming-queen: "<#c0a1d1><player> <#846d91>is attempting to control the hill!"
+  alert-warning: "<#c0a1d1><queen> <#846d91>has been alerted that you are here!"

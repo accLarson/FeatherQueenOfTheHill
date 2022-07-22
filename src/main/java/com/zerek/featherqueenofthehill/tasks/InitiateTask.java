@@ -3,6 +3,7 @@ package com.zerek.featherqueenofthehill.tasks;
 import com.zerek.featherqueenofthehill.FeatherQueenOfTheHill;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.ArmorStand;
@@ -28,7 +29,7 @@ public class InitiateTask implements Runnable{
         World world = plugin.getServer().getWorlds().get(0);
         Location standLoc = new Location(world, standConfig.get(0), standConfig.get(1), standConfig.get(2));
         Location signLoc = new Location(world, signConfig.get(0), signConfig.get(1), signConfig.get(2));
-        String queenName = null;
+        OfflinePlayer queen = null;
 
         standLoc.getChunk().load();
 
@@ -39,9 +40,8 @@ public class InitiateTask implements Runnable{
             plugin.setStand(standList.get(0));
             if (plugin.getStand().getEquipment().getHelmet().getType() == Material.PLAYER_HEAD){
                 SkullMeta skullMeta = (SkullMeta) plugin.getStand().getEquipment().getHelmet().getItemMeta();
-                plugin.getQueenManager().setQueen(skullMeta.getOwningPlayer());
-                queenName = skullMeta.getOwningPlayer().getName();
-            }
+                queen = skullMeta.getOwningPlayer();
+            } else plugin.getLogger().warning("No player head found on armor stand - Queen will be null.");
         } else plugin.getLogger().warning("No armor stand found at: " + standLoc.getBlockX() + " " + standLoc.getBlockY() + " " + standLoc.getBlockZ() + ".");
 
         if (signLoc.getBlock().getState() instanceof Sign) {
@@ -49,13 +49,13 @@ public class InitiateTask implements Runnable{
             plugin.setSign((Sign) signLoc.getBlock().getState());
         } else plugin.getLogger().warning("No sign found at: " + signLoc.getBlockX() + " " + signLoc.getBlockY() + " " + signLoc.getBlockZ() + ".");
 
-
-        if (queenName != null) plugin.getLogger().info(queenName + " has been set as the Queen.");
+        if (queen != null) {
+            plugin.getQueenManager().setQueen(queen);
+        } else plugin.getLogger().warning("Queen is null.");
 
         if (plugin.getStand() == null || plugin.getSign() == null) {
             this.plugin.getLogger().info("Failed to start QueenOfTheHill. Trying again in 1 minute");
             plugin.getServer().getScheduler().runTaskLater(plugin, new InitiateTask(plugin),1200);
-        }
-        else plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new PlayerCheckTask(plugin,plugin.getStand(),plugin.getSign(), range), 0L, 20L);
+        } else plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new PlayerCheckTask(plugin,plugin.getStand(),plugin.getSign(), range), 0L, 20L);
     }
 }
