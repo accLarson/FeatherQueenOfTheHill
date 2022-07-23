@@ -22,7 +22,9 @@ public final class FeatherQueenOfTheHill extends JavaPlugin {
         this.saveDefaultConfig();
         queenManager = new QueenManager(this);
         this.getServer().getPluginManager().registerEvents(new EntityDamageByEntityListener(this),this);
-        getServer().getScheduler().runTaskLater(this, new InitiateTask(this),800);
+
+        getServer().getScheduler().runTaskLater(this, new InitiateTask(this),2400L);
+
         this.getCommand("queen").setExecutor(new QueenCommand(this));
         this.getCommand("queen").setTabCompleter(new QueenTabCompleter());
     }
