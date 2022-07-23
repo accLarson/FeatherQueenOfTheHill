@@ -14,11 +14,12 @@ public class PlayerCheckTask implements Runnable{
     private final Sign sign;
     private final double range;
 
-    public PlayerCheckTask(FeatherQueenOfTheHill plugin, ArmorStand stand, Sign sign, double range) {
+    public PlayerCheckTask(FeatherQueenOfTheHill plugin) {
+
         this.plugin = plugin;
-        this.stand = stand;
-        this.sign = sign;
-        this.range = range;
+        this.stand = plugin.getStand();
+        this.sign = plugin.getSign();
+        this.range = this.plugin.getConfig().getInt("range");
         this.plugin.getLogger().info("Successfully started QueenOfTheHill.");
     }
 

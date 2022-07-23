@@ -24,8 +24,9 @@ public class QueenManager {
     private final FeatherQueenOfTheHill plugin;
 
     private OfflinePlayer queen;
-    private int activeQueenSeconds = 0;
+        private int activeQueenSeconds = 0;
     private double queenScore = 0;
+
     private Map<Player,Integer> playersMap = new HashMap<>();
     private final String currentQueenInfoMessage, currentQueenWaitMessage, queenOnHillMessage, timerMessage, newQueenMessage, upcomingQueenMessage, alertWarningMessage, signLine1, signLine2, signLine3, signLine4;
     private final int requiredSeconds;
@@ -33,63 +34,64 @@ public class QueenManager {
 
     public QueenManager(FeatherQueenOfTheHill plugin) {
         this.plugin = plugin;
-        currentQueenInfoMessage = plugin.getConfig().getString("messages.current-queen-info");
-        currentQueenWaitMessage = plugin.getConfig().getString("messages.current-queen-wait");
-        queenOnHillMessage = plugin.getConfig().getString("messages.queen-on-hill");
-        timerMessage = plugin.getConfig().getString("messages.timer");
-        newQueenMessage = plugin.getConfig().getString("messages.new-queen");
-        upcomingQueenMessage = plugin.getConfig().getString("messages.upcoming-queen");
-        alertWarningMessage = plugin.getConfig().getString("messages.alert-warning");
-        signLine1 = plugin.getConfig().getString("sign-text.line-1");
-        signLine2 = plugin.getConfig().getString("sign-text.line-2");
-        signLine3 = plugin.getConfig().getString("sign-text.line-3");
-        signLine4 = plugin.getConfig().getString("sign-text.line-4");
-        requiredSeconds = plugin.getConfig().getInt("minutes") * 60;
+        this.queen = this.plugin.getServer().getOfflinePlayer("Zerek");
+        this.currentQueenInfoMessage = plugin.getConfig().getString("messages.current-queen-info");
+        this.currentQueenWaitMessage = plugin.getConfig().getString("messages.current-queen-wait");
+        this.queenOnHillMessage = plugin.getConfig().getString("messages.queen-on-hill");
+        this.timerMessage = plugin.getConfig().getString("messages.timer");
+        this.newQueenMessage = plugin.getConfig().getString("messages.new-queen");
+        this.upcomingQueenMessage = plugin.getConfig().getString("messages.upcoming-queen");
+        this.alertWarningMessage = plugin.getConfig().getString("messages.alert-warning");
+        this.signLine1 = plugin.getConfig().getString("sign-text.line-1");
+        this.signLine2 = plugin.getConfig().getString("sign-text.line-2");
+        this.signLine3 = plugin.getConfig().getString("sign-text.line-3");
+        this.signLine4 = plugin.getConfig().getString("sign-text.line-4");
+        this.requiredSeconds = plugin.getConfig().getInt("minutes") * 60;
 
     }
 
     public void updateGame(Collection<Player> players, ArmorStand stand, Sign sign){
+
+        // Update Queen statistics.
         this.activeQueenSeconds += 1;
         this.addScore(0.0001);
+
+        // Update sign Statistics lines.
         sign.line(2, MiniMessage.miniMessage().deserialize(signLine3,Placeholder.unparsed("minutes", String.valueOf(activeQueenSeconds/60))));
         sign.line(3, MiniMessage.miniMessage().deserialize(signLine4,Placeholder.unparsed("score", String.valueOf(String.format("%.2f", queenScore)))));
         sign.update();
-        //Remove players who have left the square.
-        playersMap = playersMap.entrySet().stream()
-                .filter(x -> players.contains(x.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+        // Remove players who have left the square.
+        playersMap = playersMap.entrySet().stream().filter(x -> players.contains(x.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        // Consider each player in the square.
         players.forEach(p -> {
-            //Player is already in square
-            if (this.playersMap.containsKey(p)){
+
+            // Player has just entered the square within the runnable interval (1 second).
+            if (!this.playersMap.containsKey(p)) this.playersMap.put(p , 1);
+
+            //Player was already in the square conditions
+            else {
                 this.playersMap.put(p, this.playersMap.get(p) + 1);
 
-                //NOTIFY TIME OR QUEEN ON HILL
-                //Player is not Queen, has been in square for less than requiredSeconds, and is at a 10-second interval.
+                // Check if player has been in the square at a 10-second interval and not long enough to be crowned and is not the Queen.
                 if ((!p.equals(queen)) && (this.playersMap.get(p) < this.requiredSeconds) && (this.playersMap.get(p) % 10 == 0)){
-                    //tell the player the queen is on the hill
-                    if (queen.isOnline() && players.contains(queen.getPlayer())) p.sendActionBar(MiniMessage.miniMessage().deserialize(queenOnHillMessage));
-                    //tell the player the remaining time till they are crowned
+
+                    // Tell the player the queen is on the hill.
+                    if (this.isQueenSet() && queen.isOnline() && players.contains(queen.getPlayer())) p.sendActionBar(MiniMessage.miniMessage().deserialize(queenOnHillMessage));
+
+                    //tell the player the remaining time till they are crowned.
                     else p.sendActionBar(MiniMessage.miniMessage().deserialize(timerMessage, Placeholder.unparsed("remaining", String.valueOf(requiredSeconds - playersMap.get(p)))));
                 }
 
-                //WARN PLAYER AND QUEEN
-                //Player has been in the square for exactly 30 seconds and the player is not the Queen.
-                if (this.playersMap.get(p) == 30 && !(p.equals(queen)) && queen.isOnline()) {
+                // Check if the player has been in the square for exactly 30 seconds and is not the Queen and the Queen is online. Warn the player and alert the Queen.
+                if (this.playersMap.get(p) == 30 && !(p.equals(queen)) && this.isQueenSet() && queen.isOnline()) {
                     queen.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(upcomingQueenMessage, Placeholder.unparsed("player",p.getName())));
                     p.sendMessage(MiniMessage.miniMessage().deserialize(alertWarningMessage, Placeholder.unparsed("queen",queen.getPlayer().getName())));
                 }
 
-                //CROWN QUEEN
-                //Player has been in the square for requiredSeconds or more, is not the Queen, and the queen is not in the square.
-                else if ((!p.equals(queen)) && this.playersMap.get(p) >= this.requiredSeconds && (!queen.isOnline() || (queen.isOnline() && !players.contains(queen.getPlayer())))) crownQueen(p, stand, sign);
-            }
-
-            //NEW PLAYER ENTER GAME
-            else {
-                plugin.getLogger().info(p.getName() + " entered the Queen of the hill square.");
-                this.playersMap.put(p , 1);
-
+                // Check if the player has been in the square for the required seconds to be crowned and is not the queen and either the queen is offline or outside the square. Crown the new Queen.
+                else if ((!p.equals(queen)) && this.playersMap.get(p) >= this.requiredSeconds && (this.isQueenSet() && !queen.isOnline() || (this.isQueenSet() && queen.isOnline() && !players.contains(queen.getPlayer())))) crownQueen(p, stand, sign);
             }
         });
     }
@@ -123,6 +125,18 @@ public class QueenManager {
         plugin.getLogger().info(offlinePlayer.getName() + " has been set as the Queen.");
     }
 
+    public void setActiveQueenSeconds(int activeQueenSeconds) {
+        this.activeQueenSeconds = activeQueenSeconds;
+    }
+
+    public void setQueenScore(double queenScore) {
+        this.queenScore = queenScore;
+    }
+
+    public boolean isQueenSet(){
+        return this.queen != null;
+    }
+
     public boolean isOnline(){
         return this.queen.isOnline();
     }
@@ -136,7 +150,7 @@ public class QueenManager {
     }
 
     public void displayCurrentQueenInfo(CommandSender sender) {
-        if (this.queen != null && queen.getName() != null){
+        if (isQueenSet() && queen.getName() != null){
             sender.sendMessage(MiniMessage.miniMessage().deserialize(currentQueenInfoMessage,
                     Placeholder.unparsed("queen",queen.getName()),
                     Placeholder.unparsed("minutes", String.valueOf(activeQueenSeconds/60)),

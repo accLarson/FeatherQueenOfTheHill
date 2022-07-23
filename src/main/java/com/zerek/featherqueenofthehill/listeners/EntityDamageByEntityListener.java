@@ -2,6 +2,7 @@ package com.zerek.featherqueenofthehill.listeners;
 
 import com.zerek.featherqueenofthehill.FeatherQueenOfTheHill;
 import com.zerek.featherqueenofthehill.managers.QueenManager;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,11 +20,11 @@ public class EntityDamageByEntityListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
-        if (qm.isOnline()){
-            if (event.getDamager() == qm.getQueen()){
+        if (qm.isQueenSet() && qm.isOnline()){
+            if (event.getDamager() == qm.getQueen() && event.getEntity() instanceof Player){
                 qm.addScore(event.getDamage()/75.0);
             }
-            if (event.getEntity() == qm.getQueen()){
+            if (event.getEntity() == qm.getQueen() && event.getDamager() instanceof Player){
                 qm.addScore(event.getDamage()/100.0);
             }
         }
