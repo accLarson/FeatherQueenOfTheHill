@@ -3,16 +3,11 @@ package com.zerek.featherqueenofthehill.tasks;
 import com.zerek.featherqueenofthehill.FeatherQueenOfTheHill;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class InitiateTask implements Runnable{
 
@@ -24,17 +19,13 @@ public class InitiateTask implements Runnable{
 
     @Override
     public void run() {
-        this.plugin.getLogger().info("Attempting to start QueenOfTheHill.");
+        World world = plugin.getServer().getWorlds().get(0);
+
 
         List<Integer> standConfig = this.plugin.getConfig().getIntegerList("stand");
         List<Integer> signConfig = this.plugin.getConfig().getIntegerList("sign");
-
-        World world = plugin.getServer().getWorlds().get(0);
         Location standLoc = new Location(world, standConfig.get(0), standConfig.get(1), standConfig.get(2));
         Location signLoc = new Location(world, signConfig.get(0), signConfig.get(1), signConfig.get(2));
-
-        int minutes;
-        double score;
 
         // Check if stand is loaded.
         if (standLoc.getChunk().isEntitiesLoaded()){
@@ -47,7 +38,6 @@ public class InitiateTask implements Runnable{
             }
             // No stand found.
             else plugin.getLogger().warning("No armor stand found at: " + standLoc.getBlockX() + " " + standLoc.getBlockY() + " " + standLoc.getBlockZ() + ".");
-
 
             // Check if sign was found at specified location in config. If true, set the sign.
             if (signLoc.getBlock().getState() instanceof Sign) {
@@ -73,13 +63,9 @@ public class InitiateTask implements Runnable{
             else plugin.getLogger().warning("No sign found at: " + signLoc.getBlockX() + " " + signLoc.getBlockY() + " " + signLoc.getBlockZ() + ".");
 
         }
-        else plugin.getLogger().warning("The Queen of The Hill chunk is not yet loaded. Requires a player in the area to start the game.");
 
         // Check for failed stand or sign assignment and schedule to attempt again in 10 seconds.
-        if (plugin.getStand() == null || plugin.getSign() == null) {
-            this.plugin.getLogger().info("Failed to start QueenOfTheHill. Trying again in 10 seconds");
-            plugin.getServer().getScheduler().runTaskLater(plugin, new InitiateTask(plugin),200L);
-        }
+        if (plugin.getStand() == null || plugin.getSign() == null) plugin.getServer().getScheduler().runTaskLater(plugin, new InitiateTask(plugin),200L);
         // All checks passed, QueenOfTheHill starting.
         else plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new PlayerCheckTask(plugin), 0L, 20L);
 

@@ -67,31 +67,38 @@ public class QueenManager {
         // Consider each player in the square.
         players.forEach(p -> {
 
+
             // Player has just entered the square within the runnable interval (1 second).
             if (!this.playersMap.containsKey(p)) this.playersMap.put(p , 1);
 
-            //Player was already in the square conditions
+            //Player is already in the square and is not queen
             else {
+
                 this.playersMap.put(p, this.playersMap.get(p) + 1);
 
-                // Check if player has been in the square at a 10-second interval and not long enough to be crowned and is not the Queen.
-                if ((!p.equals(queen)) && (this.playersMap.get(p) < this.requiredSeconds) && (this.playersMap.get(p) % 10 == 0)){
+                if (this.isQueenSet() && !this.isQueen(p)) {
 
-                    // Tell the player the queen is on the hill.
-                    if (this.isQueenSet() && queen.isOnline() && players.contains(queen.getPlayer())) p.sendActionBar(MiniMessage.miniMessage().deserialize(queenOnHillMessage));
+                    // Check if player has been in the square at a 10-second interval and not long enough to be crowned.
+                    if ((this.playersMap.get(p) < this.requiredSeconds) && (this.playersMap.get(p) % 10 == 0)){
 
-                    //tell the player the remaining time till they are crowned.
-                    else p.sendActionBar(MiniMessage.miniMessage().deserialize(timerMessage, Placeholder.unparsed("remaining", String.valueOf(requiredSeconds - playersMap.get(p)))));
+                        // Tell the player the queen is on the hill.
+                        if (isQueenOnHill(players)) p.sendActionBar(MiniMessage.miniMessage().deserialize(queenOnHillMessage));
+
+                            //tell the player the remaining time till they are crowned.
+                        else p.sendActionBar(MiniMessage.miniMessage().deserialize(timerMessage, Placeholder.unparsed("remaining", String.valueOf(requiredSeconds - playersMap.get(p)))));
+                    }
+
+                    // Check if the player has been in the square for exactly 30 seconds and the Queen is online. Warn the player and alert the Queen.
+                    if (this.playersMap.get(p) == 30 && this.isQueenOnline()) {
+                        queen.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(upcomingQueenMessage, Placeholder.unparsed("player",p.getName())));
+                        p.sendMessage(MiniMessage.miniMessage().deserialize(alertWarningMessage, Placeholder.unparsed("queen",queen.getPlayer().getName())));
+                    }
+
+                    // Check if the player has been in the square for the required seconds to be crowned and either the queen is offline or outside the square. Crown the new Queen.
+                    else if ((this.playersMap.get(p) >= this.requiredSeconds) && !this.isQueenOnHill(players)) crownQueen(p, stand, sign);
+
                 }
 
-                // Check if the player has been in the square for exactly 30 seconds and is not the Queen and the Queen is online. Warn the player and alert the Queen.
-                if (this.playersMap.get(p) == 30 && !(p.equals(queen)) && this.isQueenSet() && queen.isOnline()) {
-                    queen.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize(upcomingQueenMessage, Placeholder.unparsed("player",p.getName())));
-                    p.sendMessage(MiniMessage.miniMessage().deserialize(alertWarningMessage, Placeholder.unparsed("queen",queen.getPlayer().getName())));
-                }
-
-                // Check if the player has been in the square for the required seconds to be crowned and is not the queen and either the queen is offline or outside the square. Crown the new Queen.
-                else if ((!p.equals(queen)) && this.playersMap.get(p) >= this.requiredSeconds && (this.isQueenSet() && !queen.isOnline() || (this.isQueenSet() && queen.isOnline() && !players.contains(queen.getPlayer())))) crownQueen(p, stand, sign);
             }
         });
     }
@@ -125,6 +132,10 @@ public class QueenManager {
         plugin.getLogger().info(offlinePlayer.getName() + " has been set as the Queen.");
     }
 
+    public boolean isQueen(Player player){
+        return queen.getUniqueId().equals(player.getUniqueId());
+    }
+
     public void setActiveQueenSeconds(int activeQueenSeconds) {
         this.activeQueenSeconds = activeQueenSeconds;
     }
@@ -137,8 +148,13 @@ public class QueenManager {
         return this.queen != null;
     }
 
-    public boolean isOnline(){
-        return this.queen.isOnline();
+    public boolean isQueenOnline(){
+        if (this.isQueenSet()) return this.queen.isOnline();
+        return false;
+    }
+
+    public boolean isQueenOnHill(Collection<Player> players){
+        return this.isQueenOnline() && players.contains(queen.getPlayer());
     }
 
     public OfflinePlayer getQueen(){

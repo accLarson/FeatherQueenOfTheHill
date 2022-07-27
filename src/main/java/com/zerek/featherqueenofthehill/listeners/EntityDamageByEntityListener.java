@@ -20,7 +20,7 @@ public class EntityDamageByEntityListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
-        if (qm.isQueenSet() && qm.isOnline()){
+        if (qm.isQueenOnline()){
             if (event.getDamager() == qm.getQueen() && event.getEntity() instanceof Player){
                 qm.addScore(event.getDamage()/75.0);
             }
