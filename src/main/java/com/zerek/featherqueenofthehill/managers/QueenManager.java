@@ -144,7 +144,7 @@ public class QueenManager {
         this.queenScore = queenScore;
     }
 
-    public boolean isQueenSet(){
+    private boolean isQueenSet(){
         return this.queen != null;
     }
 
