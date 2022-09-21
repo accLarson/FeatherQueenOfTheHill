@@ -27,6 +27,9 @@ public class QueenCommand implements CommandExecutor {
                 case "current":
                     if (sender.hasPermission("feather.queen.current") || sender instanceof ConsoleCommandSender) plugin.getQueenManager().displayCurrentQueenInfo(sender);
                     return true;
+                case "leaderboard":
+                    if (sender.hasPermission("feather.queen.leaderboard") || sender instanceof ConsoleCommandSender) plugin.getScoreManager().displayTopScores(10,sender);
+                    return true;
                 default:
                     sender.sendMessage(ChatColor.of("#E4453A") + "Invalid Command");
                     return true;

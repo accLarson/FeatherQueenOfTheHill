@@ -25,7 +25,7 @@ public class QueenManager {
 
     private OfflinePlayer queen;
         private int activeQueenSeconds = 0;
-    private double queenScore = 0;
+    private Float queenScore = (float) 0;
 
     private Map<Player,Integer> playersMap = new HashMap<>();
     private final String currentQueenInfoMessage, currentQueenWaitMessage, queenOnHillMessage, timerMessage, newQueenMessage, upcomingQueenMessage, alertWarningMessage, signLine1, signLine2, signLine3, signLine4;
@@ -54,7 +54,7 @@ public class QueenManager {
 
         // Update Queen statistics.
         this.activeQueenSeconds += 1;
-        this.addScore(0.0001);
+        this.addScore((float) 0.0001);
 
         // Update sign Statistics lines.
         sign.line(2, MiniMessage.miniMessage().deserialize(signLine3,Placeholder.unparsed("minutes", String.valueOf(activeQueenSeconds/60))));
@@ -96,20 +96,19 @@ public class QueenManager {
 
                     // Check if the player has been in the square for the required seconds to be crowned and either the queen is offline or outside the square. Crown the new Queen.
                     else if ((this.playersMap.get(p) >= this.requiredSeconds) && !this.isQueenOnHill(players)) crownQueen(p, stand, sign);
-
                 }
-
             }
         });
     }
 
     private void crownQueen(Player player, ArmorStand stand, Sign sign){
         stand.getChunk().load();
+        plugin.getScoreManager().addScore(this.queen,this.queenScore);
         plugin.getLogger().info(player.getName() + " is now the Queen of the hill.");
         plugin.getServer().broadcast(MiniMessage.miniMessage().deserialize(newQueenMessage, Placeholder.unparsed("player",player.getName())));
 
         this.activeQueenSeconds = 0;
-        this.queenScore = 0;
+        this.queenScore = (float) 0;
 
         setQueen(player);
 
@@ -140,7 +139,7 @@ public class QueenManager {
         this.activeQueenSeconds = activeQueenSeconds;
     }
 
-    public void setQueenScore(double queenScore) {
+    public void setQueenScore(Float queenScore) {
         this.queenScore = queenScore;
     }
 
@@ -161,7 +160,7 @@ public class QueenManager {
         return this.queen;
     }
 
-    public void addScore(double addedScore){
+    public void addScore(Float addedScore){
         this.queenScore += addedScore;
     }
 

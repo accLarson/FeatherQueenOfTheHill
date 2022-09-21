@@ -56,7 +56,7 @@ public class InitiateTask implements Runnable{
 
                 // Parse score from sign and set score.
                 String scoreLine = PlainTextComponentSerializer.plainText().serialize(plugin.getSign().line(3));
-                if (!scoreLine.isEmpty()) plugin.getQueenManager().setQueenScore(Double.parseDouble(scoreLine.substring(scoreLine.lastIndexOf(" ")+1)));
+                if (!scoreLine.isEmpty()) plugin.getQueenManager().setQueenScore(Float.parseFloat(scoreLine.substring(scoreLine.lastIndexOf(" ")+1)));
                 else plugin.getLogger().warning("No score specified on sign - score will be set to 0.");
             }
             //No sign found.

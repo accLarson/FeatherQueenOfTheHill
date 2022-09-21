@@ -6,7 +6,7 @@
 
     <groupId>com.zerek</groupId>
     <artifactId>FeatherQueenOfTheHill</artifactId>
-    <version>1.4.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>FeatherQueenOfTheHill</name>
@@ -19,6 +19,19 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.javalite</groupId>
+                <artifactId>activejdbc-instrumentation</artifactId>
+                <version>2.4-j8</version>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>instrument</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -55,6 +68,10 @@
 
     <repositories>
         <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
             <id>papermc-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
@@ -68,8 +85,13 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.19-R0.1-SNAPSHOT</version>
+            <version>1.19.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.javalite</groupId>
+            <artifactId>activejdbc</artifactId>
+            <version>3.1-j11</version>
         </dependency>
     </dependencies>
 </project>

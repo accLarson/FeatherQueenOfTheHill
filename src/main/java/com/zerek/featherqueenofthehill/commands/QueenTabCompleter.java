@@ -16,6 +16,7 @@ public class QueenTabCompleter implements TabCompleter {
         List<String> options = new ArrayList<>();
         if (sender.hasPermission("feather.queen.reload") || sender instanceof ConsoleCommandSender) options.add(0, "reload");
         if (sender.hasPermission("feather.queen.current") || sender instanceof ConsoleCommandSender) options.add(0, "current");
+        if (sender.hasPermission("feather.queen.leaderboard") || sender instanceof ConsoleCommandSender) options.add(0, "leaderboard");
         return options;
     }
 }

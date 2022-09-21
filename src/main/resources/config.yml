@@ -19,3 +19,10 @@ messages:
   new-queen: "• <#e2b492>░ <player> <#b98863>has been crowned <#e2b492>Queen of the hill<#b98863>! <#e2b492>░"
   upcoming-queen: "<#c0a1d1><player> <#846d91>is attempting to control the hill!"
   alert-warning: "<#c0a1d1><queen> <#846d91>has been alerted that you are here!"
+
+prefix-line: "<#ffffff>•<#7777777>--- <#ffffff>feather64 QOTH <#7777777>----------------------------------<#ffffff>•"
+suffix-line: "<#ffffff>•<#7777777>----------------------------------------------------<#ffffff>•"
+
+leaderboard:
+  header: "<#656b96><queen><#656b96><score>"
+  entry: "<#949bd1><queen><#949bd1><score>"
