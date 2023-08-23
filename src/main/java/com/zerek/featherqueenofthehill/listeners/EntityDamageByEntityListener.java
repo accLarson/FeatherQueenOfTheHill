@@ -4,6 +4,7 @@ import com.zerek.featherqueenofthehill.FeatherQueenOfTheHill;
 import com.zerek.featherqueenofthehill.managers.QueenManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
@@ -17,7 +18,7 @@ public class EntityDamageByEntityListener implements Listener {
         this.qm = plugin.getQueenManager();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
         if (qm.isQueenOnline() && qm.getQueen().getPlayer().hasPermission("feather.queen.atspawn")){
             if (event.getDamager() == qm.getQueen() && event.getEntity() instanceof Player){

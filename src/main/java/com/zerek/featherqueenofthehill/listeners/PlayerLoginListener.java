@@ -1,7 +1,6 @@
 package com.zerek.featherqueenofthehill.listeners;
 
 import com.zerek.featherqueenofthehill.FeatherQueenOfTheHill;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
