@@ -91,7 +91,7 @@
         <dependency>
             <groupId>org.javalite</groupId>
             <artifactId>activejdbc</artifactId>
-            <version>3.1-j11</version>
+            <version>3.4-j11</version>
         </dependency>
     </dependencies>
 </project>
