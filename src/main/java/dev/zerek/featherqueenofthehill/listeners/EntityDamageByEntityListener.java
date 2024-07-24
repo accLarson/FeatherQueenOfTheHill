@@ -20,7 +20,7 @@ public class EntityDamageByEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
-        if (qm.isQueenOnline() && qm.getQueen().getPlayer().hasPermission("feather.queen.atspawn")){
+        if (qm.isQueenOnline() && qm.getQueen().getPlayer().hasPermission("feather.queen.atspawn") && !qm.getQueen().getPlayer().hasPermission("feather.queen.notatspawn")){
             if (event.getDamager() == qm.getQueen() && event.getEntity() instanceof Player){
                 qm.addScore((float) (event.getDamage()/75.0));
             }
